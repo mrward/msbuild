@@ -640,12 +640,10 @@ namespace Microsoft.Build.UnitTests.BackEnd
         [Fact]
         public void TasksCanGetGlobalProperties()
         {
-            var taskFactoryName = NativeMethodsShared.IsMono ? "CodeTaskFactory" : "RoslynCodeTaskFactory";
             string projectFileContents = @"
 <Project>
-  <UsingTask TaskName='test' TaskFactory='{0}' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll'>".Format(taskFactoryName)
-
-+ @"<Task>
+  <UsingTask TaskName='test' TaskFactory='RoslynCodeTaskFactory' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll'>
+    <Task>
       <Code><![CDATA[
         var globalProperties = ((IBuildEngine6)BuildEngine).GetGlobalProperties();
 
@@ -687,12 +685,9 @@ namespace Microsoft.Build.UnitTests.BackEnd
         [Fact]
         public void TasksGetNoGlobalPropertiesIfNoneSpecified()
         {
-            var taskFactoryName = NativeMethodsShared.IsMono ? "CodeTaskFactory" : "RoslynCodeTaskFactory";
             string projectFileContents = @"
 <Project>
-  <UsingTask TaskName='test' TaskFactory='{0}' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll'>".Format(taskFactoryName)
-
-+ @"
+  <UsingTask TaskName='test' TaskFactory='RoslynCodeTaskFactory' AssemblyFile='$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll'>
     <Task>
       <Code><![CDATA[
         var globalProperties = ((IBuildEngine6)BuildEngine).GetGlobalProperties();
