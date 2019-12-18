@@ -611,9 +611,8 @@ namespace Microsoft.Build.CommandLine
                     // Unfortunately /m isn't the default, and we are not yet brave enough to make it the default.
                     // However we want to give a hint to anyone who is building single proc without realizing it that there
                     // is a better way.
-                    // FIXME: remove this mono check once we have /m support
                     // Only display the message if /m isn't provided
-                    if (!NativeMethodsShared.IsMono && cpuCount == 1 && FileUtilities.IsSolutionFilename(projectFile) && verbosity > LoggerVerbosity.Minimal
+                    if (cpuCount == 1 && FileUtilities.IsSolutionFilename(projectFile) && verbosity > LoggerVerbosity.Minimal
                         && switchesNotFromAutoResponseFile[CommandLineSwitches.ParameterizedSwitch.MaxCPUCount].Length == 0
                         && switchesFromAutoResponseFile[CommandLineSwitches.ParameterizedSwitch.MaxCPUCount].Length == 0)
                     {
@@ -2343,19 +2342,6 @@ namespace Microsoft.Build.CommandLine
                     {
                         string equivalentCommandLine = commandLineSwitches.GetEquivalentCommandLineExceptProjectFile();
                         Console.WriteLine(Path.Combine(s_exePath, s_exeName) + " " + equivalentCommandLine + " " + projectFile);
-                    }
-
-                    // cpuCount > 1 not supported on mono/unix yet
-                    if (cpuCount > 1 && NativeMethodsShared.IsMono && !NativeMethodsShared.IsWindows)
-                    {
-                        cpuCount = 1;
-
-                        if (!recursing && !commandLineSwitches[CommandLineSwitches.ParameterlessSwitch.NoLogo] &&
-                            !commandLineSwitches.IsParameterizedSwitchSet(CommandLineSwitches.ParameterizedSwitch.Preprocess) &&
-                            verbosity != LoggerVerbosity.Minimal && verbosity != LoggerVerbosity.Quiet)
-                        {
-                            Console.WriteLine($"Parallel builds (/m: or /maxcpucount:) are not yet supported on Mono/Unix. Defaulting to /m:1");
-                        }
                     }
 
 #if FEATURE_XML_SCHEMA_VALIDATION
