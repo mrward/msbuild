@@ -1,6 +1,6 @@
-#!/bin/bash
+#! /bin/bash
 
-configuration="debug"
+configuration="Debug"
 host_type="core"
 build_stage1=true
 run_tests="--test"
@@ -146,4 +146,3 @@ export DOTNET_HOST_PATH="$_InitializeDotNetCli/dotnet"
 # - Do run tests
 # - Don't try to create a bootstrap deployment
 . "$ScriptRoot/common/build.sh" $run_restore --build $run_tests --ci --nodereuse false --configuration $configuration /p:CreateBootstrap=false $properties $extra_properties
-
