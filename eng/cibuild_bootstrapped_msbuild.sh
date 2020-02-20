@@ -138,7 +138,7 @@ then
   export MonoTool=`which mono`
 
   extn_path="$bootstrapRoot/net472/MSBuild"
-  extra_properties=" /p:MSBuildExtensionsPath=$extn_path /p:MSBuildExtensionsPath32=$extn_path /p:MSBuildExtensionsPath64=$extn_path /p:DeterministicSourcePaths=false /fl /flp:v=diag /p:MicrosoftNetCompilersVersion=$roslyn_version_to_use /p:NuGetBuildTasksVersion=$nuget_version_to_use"
+  extra_properties=" /p:MSBuildExtensionsPath=$extn_path /p:MSBuildExtensionsPath32=$extn_path /p:MSBuildExtensionsPath64=$extn_path /p:DeterministicSourcePaths=false /p:MicrosoftNetCompilersVersion=$roslyn_version_to_use /p:NuGetBuildTasksVersion=$nuget_version_to_use"
 else
   echo "Unsupported hostType ($host_type)"
   exit 1
