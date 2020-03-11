@@ -7,9 +7,9 @@
     </Dependency>
   </ToolsetDependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.NET.Sdk" Version="3.1.200-preview.20126.2" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="Microsoft.NET.Sdk" Version="3.1.201-servicing.20156.5" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>1a75f83011dccb47a8b9689704b961a0bf09ca14</Sha>
+      <Sha>71a64324486da0e404b372399f11ceb83682bb9c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.Razor" Version="3.1.3" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/aspnetcore-tooling</Uri>
@@ -27,17 +27,17 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>4a9f85e9f89d7f686fef2ae2109d876b1e2eed2a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Cli.Runtime" Version="3.1.200-preview.20126.2" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="Microsoft.DotNet.Cli.Runtime" Version="3.1.201-servicing.20160.2" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/cli</Uri>
-      <Sha>a47ca8f97e48fd858e0ee2aaab05c11f0c9bda1a</Sha>
+      <Sha>eb67bb0af582f076b7b14f169756cb5e64d451c4</Sha>
     </Dependency>
     <Dependency Name="NuGet.Build.Tasks" Version="5.5.0-rtm.6473" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/NuGet/NuGet.Client</Uri>
       <Sha>4ba7bfa82f894ec32a554ca8d2df143675c85735</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Dotnet.Toolset.Internal" Version="3.1.201-servicing.20160.2">
+    <Dependency Name="Microsoft.Dotnet.Toolset.Internal" Version="3.1.201-servicing.20160.4">
       <Uri>https://github.com/dotnet/toolset</Uri>
-      <Sha>db823b8c400356298c21b1498e1f437bf59f3d42</Sha>
+      <Sha>256ab426010dca8f1f90dc375e5b616f562eb59b</Sha>
     </Dependency>
     <Dependency Name="Microsoft.Net.Compilers" Version="3.5.0-beta4-20153-05" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/roslyn</Uri>
