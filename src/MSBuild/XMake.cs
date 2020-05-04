@@ -3747,7 +3747,7 @@ namespace Microsoft.Build.CommandLine
         {
             string msg = ProjectCollection.Version.ToString();
 #if RUNTIME_TYPE_NETCORE
-            const string frameworkName = ".NET Core";
+            const string frameworkName = ".NET";
 #elif MONO
             const string frameworkName = "Mono";
             if (!String.IsNullOrEmpty(GitBuildInfoForMono.BuildInfo))
