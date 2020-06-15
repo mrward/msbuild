@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Dependencies>
   <ToolsetDependencies>
-    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="1.0.0-beta.20230.5">
+    <Dependency Name="Microsoft.DotNet.Arcade.Sdk" Version="1.0.0-beta.20302.3">
       <Uri>https://github.com/dotnet/arcade</Uri>
-      <Sha>5fd50687c9a9f39bd2ee8221165ea9c1b3f565d9</Sha>
+      <Sha>9b71be0663493cd0e111b55536a2e1eeb272f54c</Sha>
     </Dependency>
   </ToolsetDependencies>
   <ProductDependencies>
-    <Dependency Name="Microsoft.NET.Sdk" Version="3.1.400-preview.20252.7" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="Microsoft.NET.Sdk" Version="3.1.400-preview.20271.7" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/sdk</Uri>
-      <Sha>6047903fd599e7704e8d97b9203ce004a4409942</Sha>
+      <Sha>112cd1f6e31b506668ab15f816110290643fa91c</Sha>
     </Dependency>
     <Dependency Name="Microsoft.NET.Sdk.Razor" Version="3.1.2" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/aspnetcore-tooling</Uri>
@@ -27,21 +27,21 @@
       <Uri>https://github.com/dotnet/core-setup</Uri>
       <Sha>916b5cba268e1e1e803243004f4276cf40b2dda8</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.DotNet.Cli.Runtime" Version="3.1.400-preview.20252.1" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="Microsoft.DotNet.Cli.Runtime" Version="3.1.400-preview.20301.1" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/cli</Uri>
-      <Sha>983e5e463595e381a7ca87d5ec93f0cf7387f03f</Sha>
+      <Sha>df651f8b833448cfe57cad49e1a36d91631d5d2f</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="5.7.0-preview.1.6592" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="NuGet.Build.Tasks" Version="5.7.0-preview.2.6618" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/NuGet/NuGet.Client</Uri>
-      <Sha>4dbf16e68eabf507b9f156c801b1b7c3b0586e43</Sha>
+      <Sha>721908c643a7806b630774e76b53e37507fec062</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Dotnet.Toolset.Internal" Version="3.1.400-preview.20252.2">
+    <Dependency Name="Microsoft.Dotnet.Toolset.Internal" Version="3.1.400-preview.20309.4">
       <Uri>https://github.com/dotnet/toolset</Uri>
-      <Sha>feff8d3f11744bd3ae9e97fa4934382f7feaa708</Sha>
+      <Sha>a926911d193f5ed70aaa0b12fa591b00fc5e638a</Sha>
     </Dependency>
-    <Dependency Name="Microsoft.Net.Compilers" Version="3.6.0-3.20218.3" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="Microsoft.Net.Compilers" Version="3.7.0-1.20262.2" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/dotnet/roslyn</Uri>
-      <Sha>37ad245fb9a7e7bf2e5b67eb377e1cf252765b6b</Sha>
+      <Sha>d6aa790a2051d9c0bd99ba9f7c6ea5be1568173c</Sha>
     </Dependency>
   </ProductDependencies>
 </Dependencies>
