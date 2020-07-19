@@ -41,7 +41,7 @@
     <MicrosoftNETSdkVersion>3.1.400-preview.20365.20</MicrosoftNETSdkVersion>
     <MicrosoftNETSdkRazorVersion>3.1.6</MicrosoftNETSdkRazorVersion>
     <MicrosoftNETSdkWebVersion>3.1.300-servicing.20216.7</MicrosoftNETSdkWebVersion>
-    <NuGetBuildTasksVersion>5.7.0-rtm.6702</NuGetBuildTasksVersion>
+    <NuGetBuildTasksVersion>5.7.0-rtm.6710</NuGetBuildTasksVersion>
     <ILLinkTasksVersion>0.1.6-prerelease.19380.1</ILLinkTasksVersion>
     <MicrosoftNETCoreAppVersion>3.1.6-servicing.20316.4</MicrosoftNETCoreAppVersion>
     <MicrosoftDotNetCliRuntimeVersion>3.1.400-preview.20365.4</MicrosoftDotNetCliRuntimeVersion>

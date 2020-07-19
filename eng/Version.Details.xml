@@ -31,7 +31,7 @@
       <Uri>https://github.com/dotnet/cli</Uri>
       <Sha>db1e18b416bef1d0b2c2cdb04c93742163637652</Sha>
     </Dependency>
-    <Dependency Name="NuGet.Build.Tasks" Version="5.7.0-rtm.6702" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
+    <Dependency Name="NuGet.Build.Tasks" Version="5.7.0-rtm.6710" CoherentParentDependency="Microsoft.Dotnet.Toolset.Internal">
       <Uri>https://github.com/NuGet/NuGet.Client</Uri>
       <Sha>cd51d2637fc533e1e188c860e7616107904a3623</Sha>
     </Dependency>
