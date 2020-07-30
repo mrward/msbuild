@@ -2046,13 +2046,13 @@ namespace Microsoft.Build.Execution
         }
 
         // todo move to nested function after c#7
-        private static void TranslatorForTargetSpecificDictionaryKey(ref string key, ITranslator translator)
+        private static void TranslatorForTargetSpecificDictionaryKey(ITranslator translator, ref string key)
         {
             translator.Translate(ref key);
         }
 
         // todo move to nested function after c#7
-        private static void TranslatorForTargetSpecificDictionaryValue(ref List<TargetSpecification> value, ITranslator translator)
+        private static void TranslatorForTargetSpecificDictionaryValue(ITranslator translator, ref List<TargetSpecification> value)
         {
             translator.Translate(ref value, TargetSpecification.FactoryForDeserialization);
         }
@@ -2146,24 +2146,7 @@ namespace Microsoft.Build.Execution
                 string solutionFile = projectFile;
                 if (FileUtilities.IsSolutionFilterFilename(projectFile))
                 {
-                    try
-                    {
-                        using JsonDocument text = JsonDocument.Parse(File.ReadAllText(projectFile));
-                        JsonElement solution = text.RootElement.GetProperty("solution");
-                        solutionFile = Path.GetFullPath(solution.GetProperty("path").GetString());
-                    }
-                    catch (Exception e) when (e is JsonException || e is KeyNotFoundException || e is InvalidOperationException)
-                    {
-                        ProjectFileErrorUtilities.VerifyThrowInvalidProjectFile
-                        (
-                            false, /* Just throw the exception */
-                            "SubCategoryForSolutionParsingErrors",
-                            new BuildEventFileInfo(projectFile),
-                            e,
-                            "SolutionFilterJsonParsingError",
-                            projectFile
-                        );
-                    }
+                    solutionFile = SolutionFile.ParseSolutionFromSolutionFilter(projectFile, out _);
                 }
                 SolutionFile.GetSolutionFileAndVisualStudioMajorVersions(solutionFile, out int solutionVersion, out int visualStudioVersion);
 
