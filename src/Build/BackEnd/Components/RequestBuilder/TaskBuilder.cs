@@ -382,9 +382,7 @@ namespace Microsoft.Build.BackEnd
             if (!condition)
             {
                 LogSkippedTask(bucket, howToExecuteTask);
-                taskResult = new WorkUnitResult(WorkUnitResultCode.Skipped, WorkUnitActionCode.Continue, null);
-
-                return taskResult;
+                return new WorkUnitResult(WorkUnitResultCode.Skipped, WorkUnitActionCode.Continue, null);
             }
 
             // Some tests do not provide an actual taskNode; checking if _taskNode == null prevents those tests from failing.
@@ -609,7 +607,7 @@ namespace Microsoft.Build.BackEnd
                     if (!_targetLoggingContext.LoggingService.OnlyLogCriticalEvents)
                     {
                         // Expand the expression for the Log.  Since we know the condition evaluated to false, leave unexpandable properties in the condition so as not to cause an error
-                        string expanded = bucket.Expander.ExpandIntoStringAndUnescape(_targetChildInstance.Condition, ExpanderOptions.ExpandAll | ExpanderOptions.LeavePropertiesUnexpandedOnError, _targetChildInstance.ConditionLocation);
+                        string expanded = bucket.Expander.ExpandIntoStringAndUnescape(_targetChildInstance.Condition, ExpanderOptions.ExpandAll | ExpanderOptions.LeavePropertiesUnexpandedOnError | ExpanderOptions.Truncate, _targetChildInstance.ConditionLocation);
 
                         // Whilst we are within the processing of the task, we haven't actually started executing it, so
                         // our skip task message needs to be in the context of the target. However any errors should be reported
@@ -1181,7 +1179,7 @@ namespace Microsoft.Build.BackEnd
         {
             string taskParameterAttribute = _taskNode.GetParameter(taskParameterName);
 
-            if (null != taskParameterAttribute)
+            if (taskParameterAttribute != null)
             {
                 ProjectTaskOutputItemInstance taskItemInstance = taskOutputSpecification as ProjectTaskOutputItemInstance;
                 if (taskItemInstance != null)

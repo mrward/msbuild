@@ -265,13 +265,13 @@ namespace Microsoft.Build.BackEnd.Logging
 
             if (Verbosity == LoggerVerbosity.Diagnostic && showItemAndPropertyList)
             {
-                if (null != e.Properties)
+                if (e.Properties != null)
                 {
                     var propertyList = ExtractPropertyList(e.Properties);
                     WriteProperties(propertyList);
                 }
 
-                if (null != e.Items)
+                if (e.Items != null)
                 {
                     SortedList itemList = ExtractItemList(e.Items);
                     WriteItems(itemList);
@@ -533,7 +533,7 @@ namespace Microsoft.Build.BackEnd.Logging
                     setColor(ConsoleColor.DarkGray);
                 }
 
-                string nonNullMessage = null;
+                string nonNullMessage;
 
                 // Include file information if present.
                 if (e.File != null)
@@ -543,7 +543,7 @@ namespace Microsoft.Build.BackEnd.Logging
                 else
                 {
                     // null messages are ok -- treat as blank line
-                    nonNullMessage = (e.Message == null) ? String.Empty : e.Message;
+                    nonNullMessage = e.Message ?? String.Empty;
                 }
 
                 WriteLinePretty(nonNullMessage);

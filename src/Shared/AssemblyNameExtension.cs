@@ -505,8 +505,7 @@ namespace Microsoft.Build.Shared
                 }
 
                 // Will not return 0 as the this != that check above takes care of the case where they are equal.
-                result = this.Version.CompareTo(that.Version);
-                return result;
+                return this.Version.CompareTo(that.Version);
             }
 
             // We need some final collating order for these, alphabetical by FullName seems as good as any.
@@ -722,7 +721,7 @@ namespace Microsoft.Build.Shared
             }
 
             // If that is null then this and that are not equal. Also, this would cause a crash on the next line.
-            if (object.ReferenceEquals(that, null))
+            if (that is null)
             {
                 return false;
             }
@@ -932,7 +931,7 @@ namespace Microsoft.Build.Shared
             }
 
             // If that is null then this and that are not equal. Also, this would cause a crash on the next line.
-            if (object.ReferenceEquals(that, null))
+            if (that is null)
             {
                 return false;
             }
