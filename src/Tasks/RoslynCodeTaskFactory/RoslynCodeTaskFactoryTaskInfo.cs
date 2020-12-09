@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Microsoft.Build.Tasks
 {
@@ -51,7 +52,7 @@ namespace Microsoft.Build.Tasks
                 return true;
             }
 
-            return References.Equals(other.References) && String.Equals(SourceCode, other.SourceCode, StringComparison.OrdinalIgnoreCase);
+            return String.Equals(SourceCode, other.SourceCode, StringComparison.Ordinal) && References.OrderBy(s => s).SequenceEqual(other.References.OrderBy(s => s));
         }
 
         public override bool Equals(object obj)
@@ -66,7 +67,8 @@ namespace Microsoft.Build.Tasks
 
         public override int GetHashCode()
         {
-            return 0;
+            // This is good enough to avoid most collisions, no need to hash References
+            return SourceCode.GetHashCode();
         }
     }
 }
