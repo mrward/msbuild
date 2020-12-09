@@ -52,7 +52,7 @@ namespace Microsoft.Build.Tasks
                 return true;
             }
 
-            return String.Equals(SourceCode, other.SourceCode, StringComparison.Ordinal) && References.OrderBy(s => s).SequenceEqual(other.References.OrderBy(s => s));
+            return String.Equals(SourceCode, other.SourceCode, StringComparison.Ordinal) && References.SetEquals(other.References);
         }
 
         public override bool Equals(object obj)
