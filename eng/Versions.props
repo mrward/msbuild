@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright (c) .NET Foundation and contributors. All rights reserved. Licensed under the MIT license. See License.txt in the project root for full license information. -->
 <Project>
-  <Import Project="$(DotNetRestoreSourcePropsPath)" Condition="'$(DotNetRestoreSourcePropsPath)' != ''" />
   <PropertyGroup>
-    <RestoreSources>$(DotNetRestoreSources)</RestoreSources>
-    <RestoreSources Condition="'$(DotNetBuildOffline)' != 'true'">
-        $(RestoreSources);
-        https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json;
-        https://dotnet.myget.org/F/roslyn/api/v3/index.json;
-        https://dotnet.myget.org/F/nuget-build/api/v3/index.json;
-        https://dotnet.myget.org/F/roslyn-tools/api/v3/index.json;
-        https://dotnet.myget.org/F/dotnet-buildtools/api/v3/index.json
-    </RestoreSources>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-  </PropertyGroup>
-  <PropertyGroup>
-    <VersionPrefix>16.8.0</VersionPrefix><DotNetFinalVersionKind>release</DotNetFinalVersionKind>
+    <VersionPrefix>16.9.0</VersionPrefix><DotNetFinalVersionKind>release</DotNetFinalVersionKind>
     <AssemblyVersion>15.1.0.0</AssemblyVersion>
     <PreReleaseVersionLabel>preview</PreReleaseVersionLabel>
     <DotNetUseShippingVersions>true</DotNetUseShippingVersions>
@@ -23,7 +10,6 @@
     <SemanticVersioningV1>true</SemanticVersioningV1>
     <MicroBuildPluginsSwixBuildVersion>1.0.672</MicroBuildPluginsSwixBuildVersion>
     <MonoBuild Condition="'$(Configuration)' == 'Debug-MONO' or '$(Configuration)' == 'Release-MONO'">true</MonoBuild>
-    <MicrosoftDotnetToolsetInternalVersion>3.1.400-preview.20367.3</MicrosoftDotnetToolsetInternalVersion>
     <MicrosoftNetCompilersVersion>3.7.0-5.20367.1</MicrosoftNetCompilersVersion>
   </PropertyGroup>
   <!-- Repo Toolset Features -->
@@ -41,11 +27,12 @@
     <MicrosoftNETSdkVersion>3.1.400-preview.20365.20</MicrosoftNETSdkVersion>
     <MicrosoftNETSdkRazorVersion>3.1.6</MicrosoftNETSdkRazorVersion>
     <MicrosoftNETSdkWebVersion>3.1.300-servicing.20216.7</MicrosoftNETSdkWebVersion>
-    <NuGetBuildTasksVersion>5.8.0-rc.6860</NuGetBuildTasksVersion>
     <ILLinkTasksVersion>0.1.6-prerelease.19380.1</ILLinkTasksVersion>
     <MicrosoftNETCoreAppVersion>3.1.6-servicing.20316.4</MicrosoftNETCoreAppVersion>
     <MicrosoftDotNetCliRuntimeVersion>3.1.400-preview.20365.4</MicrosoftDotNetCliRuntimeVersion>
-    <DotNetCliVersion>3.0.100</DotNetCliVersion>
+    <DotNetCliVersion>3.1.100</DotNetCliVersion>
+    <MicrosoftNetCompilersToolsetVersion>3.3.1-beta3-final</MicrosoftNetCompilersToolsetVersion>
+    <NuGetBuildTasksVersion>5.9.0-preview.3.7016</NuGetBuildTasksVersion>
   </PropertyGroup>
   <Target Name="OverrideArcadeFileVersion" AfterTargets="_InitializeAssemblyVersion">
     <!-- See https://github.com/dotnet/arcade/issues/3386

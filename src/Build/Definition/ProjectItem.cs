@@ -4,12 +4,10 @@
 using System.Diagnostics;
 using Microsoft.Build.Collections;
 using Microsoft.Build.Construction;
-using Microsoft.Build.Execution;
 using Microsoft.Build.ObjectModelRemoting;
 using Microsoft.Build.Shared;
 using System.Collections.Generic;
 using System;
-using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Build.Shared.FileSystem;
@@ -27,7 +25,7 @@ namespace Microsoft.Build.Evaluation
     /// we do use it for build-time items.
     /// </comment>
     [DebuggerDisplay("{ItemType}={EvaluatedInclude} [{UnevaluatedInclude}] #DirectMetadata={DirectMetadataCount}")]
-    public class ProjectItem : IKeyed, IItem<ProjectMetadata>, IMetadataTable, IProjectMetadataParent
+    public class ProjectItem : IItem<ProjectMetadata>, IProjectMetadataParent
     {
         /// <summary>
         /// Project that this item lives in.
@@ -281,6 +279,8 @@ namespace Microsoft.Build.Evaluation
             get
             { return Link != null ? Link.MetadataCollection : MetadataCollection; }
         }
+
+        IEnumerable<ProjectMetadata> IItem<ProjectMetadata>.Metadata => Metadata;
 
         /// <summary>
         /// Count of metadata on this item, if any.

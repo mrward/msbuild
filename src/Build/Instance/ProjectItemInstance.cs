@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Linq;
 using System.IO;
 
@@ -29,7 +28,7 @@ namespace Microsoft.Build.Execution
     /// and evaluation has already been performed, so it is unnecessary bulk.
     /// </remarks>
     [DebuggerDisplay("{ItemType}={EvaluatedInclude} #DirectMetadata={DirectMetadataCount})")]
-    public class ProjectItemInstance : IKeyed, IItem<ProjectMetadataInstance>, ITaskItem, ITaskItem2, IMetadataTable, ITranslatable, IDeepCloneable<ProjectItemInstance>
+    public class ProjectItemInstance : IItem<ProjectMetadataInstance>, ITaskItem2, IMetadataTable, ITranslatable, IDeepCloneable<ProjectItemInstance>
     {
         /// <summary>
         /// The project instance to which this item belongs.
@@ -724,7 +723,7 @@ namespace Microsoft.Build.Execution
 #if FEATURE_APPDOMAIN
             MarshalByRefObject,
 #endif
-            ITaskItem, ITaskItem2, IItem<ProjectMetadataInstance>, ITranslatable, IEquatable<TaskItem>
+            ITaskItem2, IItem<ProjectMetadataInstance>, ITranslatable, IEquatable<TaskItem>
         {
             /// <summary>
             /// The source file that defined this item.
@@ -1108,6 +1107,8 @@ namespace Microsoft.Build.Execution
                     return allMetadata;
                 }
             }
+
+            IEnumerable<ProjectMetadataInstance> IItem<ProjectMetadataInstance>.Metadata => MetadataCollection;
 
             #region Operators
 

@@ -8,9 +8,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Reflection;
 using Microsoft.Win32;
@@ -435,59 +433,108 @@ namespace Microsoft.Build.Shared
                 }
                 else
                 {
-                    try
+                    ProcessorArchitectures processorArchitecture = ProcessorArchitectures.Unknown;
+#if !NET35
+                    // Get the architecture from the runtime.
+                    processorArchitecture = RuntimeInformation.OSArchitecture switch
                     {
-                        // On Unix run 'uname -m' to get the architecture. It's common for Linux and Mac
-                        using (
-                            var proc =
-                                Process.Start(
-                                    new ProcessStartInfo("uname")
-                                    {
-                                        Arguments = "-m",
-                                        UseShellExecute = false,
-                                        RedirectStandardOutput = true,
-                                        CreateNoWindow = true
-                                    }))
+                        Architecture.Arm => ProcessorArchitectures.ARM,
+                        Architecture.Arm64 =>  ProcessorArchitectures.ARM64,
+                        Architecture.X64 => ProcessorArchitectures.X64,
+                        Architecture.X86 => ProcessorArchitectures.X86,
+                        _ => ProcessorArchitectures.Unknown,
+                    };
+#endif
+                    // Fall back to 'uname -m' to get the architecture.
+                    if (processorArchitecture == ProcessorArchitectures.Unknown)
+                    {
+                        try
                         {
-                            string arch = null;
-                            if (proc != null)
+                            // On Unix run 'uname -m' to get the architecture. It's common for Linux and Mac
+                            using (
+                                var proc =
+                                    Process.Start(
+                                        new ProcessStartInfo("uname")
+                                        {
+                                            Arguments = "-m",
+                                            UseShellExecute = false,
+                                            RedirectStandardOutput = true,
+                                            CreateNoWindow = true
+                                        }))
                             {
-                                // Since uname -m simply returns kernel property, it should be quick.
-                                // 1 second is the best guess for a safe timeout.
-                                proc.WaitForExit(1000);
-                                arch = proc.StandardOutput.ReadLine();
-                            }
+                                string arch = null;
+                                if (proc != null)
+                                {
+                                    // Since uname -m simply returns kernel property, it should be quick.
+                                    // 1 second is the best guess for a safe timeout.
+                                    proc.WaitForExit(1000);
+                                    arch = proc.StandardOutput.ReadLine();
+                                }
 
-                            if (!string.IsNullOrEmpty(arch))
-                            {
-                                if (arch.StartsWith("x86_64", StringComparison.OrdinalIgnoreCase))
+                                if (!string.IsNullOrEmpty(arch))
                                 {
-                                    ProcessorArchitectureType = ProcessorArchitectures.X64;
-                                }
-                                else if (arch.StartsWith("ia64", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    ProcessorArchitectureType = ProcessorArchitectures.IA64;
-                                }
-                                else if (arch.StartsWith("arm", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    ProcessorArchitectureType = ProcessorArchitectures.ARM;
-                                }
-                                else if (arch.StartsWith("i", StringComparison.OrdinalIgnoreCase)
-                                         && arch.EndsWith("86", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    ProcessorArchitectureType = ProcessorArchitectures.X86;
+                                    if (arch.StartsWith("x86_64", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        ProcessorArchitectureType = ProcessorArchitectures.X64;
+                                    }
+                                    else if (arch.StartsWith("ia64", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        ProcessorArchitectureType = ProcessorArchitectures.IA64;
+                                    }
+                                    else if (arch.StartsWith("arm", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        ProcessorArchitectureType = ProcessorArchitectures.ARM;
+                                    }
+                                    else if (arch.StartsWith("aarch64", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        ProcessorArchitectureType = ProcessorArchitectures.ARM64;
+                                    }
+                                    else if (arch.StartsWith("i", StringComparison.OrdinalIgnoreCase)
+                                            && arch.EndsWith("86", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        ProcessorArchitectureType = ProcessorArchitectures.X86;
+                                    }
                                 }
                             }
                         }
-                    }
-                    catch
-                    {
-                        ProcessorArchitectureType = ProcessorArchitectures.Unknown;
+                        catch
+                        {
+                            // Best effort: fall back to Unknown
+                        }
                     }
 
-                    ProcessorArchitectureTypeNative = ProcessorArchitectureType;
+                    ProcessorArchitectureTypeNative = ProcessorArchitectureType = processorArchitecture;
                 }
             }
+        }
+
+        public static int GetLogicalCoreCount()
+        {
+            int numberOfCpus = Environment.ProcessorCount;
+#if !MONO
+            // .NET Core on Windows returns a core count limited to the current NUMA node
+            //     https://github.com/dotnet/runtime/issues/29686
+            // so always double-check it.
+            if (IsWindows
+#if !CLR2COMPATIBILITY && !MICROSOFT_BUILD_ENGINE_OM_UNITTESTS
+                && ChangeWaves.AreFeaturesEnabled(ChangeWaves.Wave16_8)
+#endif
+#if NETFRAMEWORK
+                // .NET Framework calls Windows APIs that have a core count limit (32/64 depending on process bitness).
+                // So if we get a high core count on full framework, double-check it.
+                && (numberOfCpus >= 32)
+#endif
+            )
+            {
+                var result = GetLogicalCoreCountOnWindows();
+                if (result != -1)
+                {
+                    numberOfCpus = result;
+                }
+            }
+#endif
+
+            return numberOfCpus;
         }
 
         /// <summary>
@@ -496,7 +543,7 @@ namespace Microsoft.Build.Shared
         /// as Environment.ProcessorCount has a 32-core limit in that case. 
         /// https://github.com/dotnet/runtime/blob/221ad5b728f93489655df290c1ea52956ad8f51c/src/libraries/System.Runtime.Extensions/src/System/Environment.Windows.cs#L171-L210
         /// </summary>
-        public unsafe static int GetLogicalCoreCount()
+        private unsafe static int GetLogicalCoreCountOnWindows()
         {
             uint len = 0;
             const int ERROR_INSUFFICIENT_BUFFER = 122;

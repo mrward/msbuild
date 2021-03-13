@@ -32,7 +32,6 @@ using Microsoft.Build.Utilities;
 using EvaluationItemSpec = Microsoft.Build.Evaluation.ItemSpec<Microsoft.Build.Evaluation.ProjectProperty, Microsoft.Build.Evaluation.ProjectItem>;
 using EvaluationItemExpressionFragment = Microsoft.Build.Evaluation.ItemSpec<Microsoft.Build.Evaluation.ProjectProperty, Microsoft.Build.Evaluation.ProjectItem>.ItemExpressionFragment;
 using SdkResult = Microsoft.Build.BackEnd.SdkResolution.SdkResult;
-using System.Data.OleDb;
 
 namespace Microsoft.Build.Evaluation
 {
@@ -43,9 +42,7 @@ namespace Microsoft.Build.Evaluation
     /// Always backed by XML; can be built directly, or an instance can be cloned off to add virtual items/properties and build.
     /// Edits to this project always update the backing XML.
     /// </summary>
-    /// <remarks>
-    /// UNDONE: (Multiple configurations.) Protect against problems when attempting to edit, after edits were made to the same ProjectRootElement either directly or through other projects evaluated from that ProjectRootElement.
-    /// </remarks>
+    // UNDONE: (Multiple configurations.) Protect against problems when attempting to edit, after edits were made to the same ProjectRootElement either directly or through other projects evaluated from that ProjectRootElement.
     [DebuggerDisplay("{FullPath} EffectiveToolsVersion={ToolsVersion} #GlobalProperties={_data.GlobalPropertiesDictionary.Count} #Properties={_data.Properties.Count} #ItemTypes={_data.ItemTypes.Count} #ItemDefinitions={_data.ItemDefinitions.Count} #Items={_data.Items.Count} #Targets={_data.Targets.Count}")]
     public class Project : ILinkableObject
     {
@@ -1332,7 +1329,7 @@ namespace Microsoft.Build.Evaluation
         /// access concurrently from multiple threads.
         /// </summary>
         /// <param name="settings">The project instance creation settings.</param>
-        /// <returns>the created project instance.</returns>
+        /// <returns>The created project instance.</returns>
         public ProjectInstance CreateProjectInstance(ProjectInstanceSettings settings)
         {
             return CreateProjectInstance(settings, null);
@@ -1343,7 +1340,7 @@ namespace Microsoft.Build.Evaluation
         /// </summary>
         /// <param name="settings">The project instance creation settings.</param>
         /// <param name="evaluationContext">The evaluation context to use in case reevaluation is required.</param>
-        /// <returns>the created project instance.</returns>
+        /// <returns>The created project instance.</returns>
         public ProjectInstance CreateProjectInstance(ProjectInstanceSettings settings, EvaluationContext evaluationContext)
         {
             return implementation.CreateProjectInstance(settings, evaluationContext);

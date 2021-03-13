@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
@@ -85,6 +86,7 @@ namespace Microsoft.Build.Tasks
         private ITaskItem[] _scatterFiles = Array.Empty<TaskItem>();
         private ITaskItem[] _copyLocalFiles = Array.Empty<TaskItem>();
         private ITaskItem[] _suggestedRedirects = Array.Empty<TaskItem>();
+        private List<ITaskItem> _unresolvedConflicts = new List<ITaskItem>();
         private string[] _targetFrameworkSubsets = Array.Empty<string>();
         private string[] _fullTargetFrameworkSubsetNames = Array.Empty<string>();
         private string _targetedFrameworkMoniker = String.Empty;
@@ -212,6 +214,11 @@ namespace Microsoft.Build.Tasks
         /// conflicts within an externally resolved graph.
         /// </remarks>
         public bool FindDependenciesOfExternallyResolvedReferences { get; set; }
+
+        /// <summary>
+        /// If true, outputs any unresolved assembly conflicts (MSB3277) in UnresolvedAssemblyConflicts.
+        /// </summary>
+        public bool OutputUnresolvedAssemblyConflicts { get; set; }
 
         /// <summary>
         /// List of target framework subset names which will be searched for in the target framework directories
@@ -914,6 +921,13 @@ namespace Microsoft.Build.Tasks
             private set;
         }
 
+        /// <summary>
+        /// If OutputUnresolvedAssemblyConflicts then a list of information about unresolved conflicts that normally would have
+        /// been outputted in MSB3277. Otherwise empty.
+        /// </summary>
+        [Output]
+        public ITaskItem[] UnresolvedAssemblyConflicts => _unresolvedConflicts.ToArray();
+
         #endregion
         #region Logging
 
@@ -975,16 +989,45 @@ namespace Microsoft.Build.Tasks
 
                         if (conflictCandidate.IsConflictVictim)
                         {
-                            LogConflict(conflictCandidate, fusionName);
+                            bool logWarning = idealAssemblyRemappingsIdentities.Any(i => i.assemblyName.FullName.Equals(fusionName) && i.reference.GetConflictVictims().Count == 0);
+                            StringBuilder logConflict = StringBuilderCache.Acquire();
+                            LogConflict(conflictCandidate, fusionName, logConflict);
+                            StringBuilder logDependencies = logWarning ? logConflict.AppendLine() : StringBuilderCache.Acquire();
 
                             // Log the assemblies and primary source items which are related to the conflict which was just logged.
                             Reference victor = dependencyTable.GetReference(conflictCandidate.ConflictVictorName);
 
                             // Log the winner of the conflict resolution, the source items and dependencies which caused it
-                            LogReferenceDependenciesAndSourceItems(conflictCandidate.ConflictVictorName.FullName, victor);
+                            LogReferenceDependenciesAndSourceItemsToStringBuilder(conflictCandidate.ConflictVictorName.FullName, victor, logDependencies);
 
                             // Log the reference which lost the conflict and the dependencies and source items which caused it.
-                            LogReferenceDependenciesAndSourceItems(fusionName, conflictCandidate);
+                            LogReferenceDependenciesAndSourceItemsToStringBuilder(fusionName, conflictCandidate, logDependencies.AppendLine());
+
+                            string output = StringBuilderCache.GetStringAndRelease(logConflict);
+                            string details = string.Empty;
+                            if (logWarning)
+                            {
+                                // This warning is logged regardless of AutoUnify since it means a conflict existed where the reference	
+                                // chosen was not the conflict victor in a version comparison. In other words, the victor was older.
+                                Log.LogWarningWithCodeFromResources("ResolveAssemblyReference.FoundConflicts", assemblyName.Name, output);
+                            }
+                            else
+                            {
+                                details = StringBuilderCache.GetStringAndRelease(logDependencies);
+                                Log.LogMessage(ChooseReferenceLoggingImportance(conflictCandidate), output);
+                                Log.LogMessage(MessageImportance.Low, details);
+                            }
+
+                            if (OutputUnresolvedAssemblyConflicts)
+                            {
+                                _unresolvedConflicts.Add(new TaskItem(assemblyName.Name, new Dictionary<string, string>()
+                                {
+                                    { "logMessage", output },
+                                    { "logMessageDetails", details },
+                                    { "victorVersionNumber", victor.ReferenceVersion?.ToString() },
+                                    { "victimVersionNumber", conflictCandidate.ReferenceVersion?.ToString() }
+                                }));
+                            }
                         }
                     }
 
@@ -1066,13 +1109,6 @@ namespace Microsoft.Build.Tasks
                                         buffer.Append(node.ToString(SaveOptions.DisableFormatting));
                                     }
                                 }
-                            }
-
-                            if (conflictVictims.Count == 0)
-                            {
-                                // This warning is logged regardless of AutoUnify since it means a conflict existed where the reference
-                                // chosen was not the conflict victor in a version comparison, in other words it was older.
-                                Log.LogWarningWithCodeFromResources("ResolveAssemblyReference.FoundConflicts", idealRemappingPartialAssemblyName.Name);
                             }
                         }
 
@@ -1163,27 +1199,27 @@ namespace Microsoft.Build.Tasks
         /// <summary>
         /// Log the source items and dependencies which lead to a given item.
         /// </summary>
-        private void LogReferenceDependenciesAndSourceItems(string fusionName, Reference conflictCandidate)
+        private void LogReferenceDependenciesAndSourceItemsToStringBuilder(string fusionName, Reference conflictCandidate, StringBuilder log)
         {
             ErrorUtilities.VerifyThrowInternalNull(conflictCandidate, "ConflictCandidate");
-            Log.LogMessageFromResources(MessageImportance.Low, "ResolveAssemblyReference.FourSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.ReferenceDependsOn", fusionName, conflictCandidate.FullPath));
+            log.Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.FourSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.ReferenceDependsOn", fusionName, conflictCandidate.FullPath)));
 
             if (conflictCandidate.IsPrimary)
             {
                 if (conflictCandidate.IsResolved)
                 {
-                    LogDependeeReference(conflictCandidate);
+                    LogDependeeReferenceToStringBuilder(conflictCandidate, log);
                 }
                 else
                 {
-                    Log.LogMessageFromResources(MessageImportance.Low, "ResolveAssemblyReference.EightSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.UnResolvedPrimaryItemSpec", conflictCandidate.PrimarySourceItem));
+                    log.AppendLine().Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.EightSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.UnResolvedPrimaryItemSpec", conflictCandidate.PrimarySourceItem)));
                 }
             }
 
             // Log the references for the conflict victim
             foreach (Reference dependeeReference in conflictCandidate.GetDependees())
             {
-                LogDependeeReference(dependeeReference);
+                LogDependeeReferenceToStringBuilder(dependeeReference, log);
             }
         }
 
@@ -1191,14 +1227,15 @@ namespace Microsoft.Build.Tasks
         /// Log the dependee and the item specs which caused the dependee reference to be resolved.
         /// </summary>
         /// <param name="dependeeReference"></param>
-        private void LogDependeeReference(Reference dependeeReference)
+        /// <param name="log">The means by which messages should be logged.</param>
+        private void LogDependeeReferenceToStringBuilder(Reference dependeeReference, StringBuilder log)
         {
-            Log.LogMessageFromResources(MessageImportance.Low, "ResolveAssemblyReference.EightSpaceIndent", dependeeReference.FullPath);
+            log.AppendLine().AppendLine(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.EightSpaceIndent", dependeeReference.FullPath));
 
-            Log.LogMessageFromResources(MessageImportance.Low, "ResolveAssemblyReference.TenSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.PrimarySourceItemsForReference", dependeeReference.FullPath));
+            log.Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.TenSpaceIndent", ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.PrimarySourceItemsForReference", dependeeReference.FullPath)));
             foreach (ITaskItem sourceItem in dependeeReference.GetSourceItems())
             {
-                Log.LogMessageFromResources(MessageImportance.Low, "ResolveAssemblyReference.TwelveSpaceIndent", sourceItem.ItemSpec);
+                log.AppendLine().Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.TwelveSpaceIndent", sourceItem.ItemSpec));
             }
         }
 
@@ -1798,26 +1835,24 @@ namespace Microsoft.Build.Tasks
         /// </summary>
         /// <param name="reference">The reference.</param>
         /// <param name="fusionName">The fusion name of the reference.</param>
-        private void LogConflict(Reference reference, string fusionName)
+        /// <param name="log">StringBuilder holding information to be logged.</param>
+        private void LogConflict(Reference reference, string fusionName, StringBuilder log)
         {
-            // Set an importance level to be used for secondary messages.
-            MessageImportance importance = ChooseReferenceLoggingImportance(reference);
-
-            Log.LogMessageFromResources(importance, "ResolveAssemblyReference.ConflictFound", reference.ConflictVictorName, fusionName);
+            log.Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.ConflictFound", reference.ConflictVictorName, fusionName));
             switch (reference.ConflictLossExplanation)
             {
                 case ConflictLossReason.HadLowerVersion:
                     {
                         Debug.Assert(!reference.IsPrimary, "A primary reference should never lose a conflict because of version. This is an insoluble conflict instead.");
                         string message = Log.FormatResourceString("ResolveAssemblyReference.ConflictHigherVersionChosen", reference.ConflictVictorName);
-                        Log.LogMessageFromResources(importance, "ResolveAssemblyReference.FourSpaceIndent", message);
+                        log.AppendLine().Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.FourSpaceIndent", message));
                         break;
                     }
 
                 case ConflictLossReason.WasNotPrimary:
                     {
                         string message = Log.FormatResourceString("ResolveAssemblyReference.ConflictPrimaryChosen", reference.ConflictVictorName, fusionName);
-                        Log.LogMessageFromResources(importance, "ResolveAssemblyReference.FourSpaceIndent", message);
+                        log.AppendLine().Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.FourSpaceIndent", message));
                         break;
                     }
 
@@ -1832,9 +1867,7 @@ namespace Microsoft.Build.Tasks
                     {
                         // For dependencies, adding an app.config entry could help. Log a comment, there will be
                         // a summary warning later on.
-                        string message;
-                        string code = Log.ExtractMessageCode(Log.FormatResourceString("ResolveAssemblyReference.ConflictUnsolvable", reference.ConflictVictorName, fusionName), out message);
-                        Log.LogMessage(MessageImportance.High, message);
+                        log.AppendLine().Append(ResourceUtilities.FormatResourceStringIgnoreCodeAndKeyword("ResolveAssemblyReference.ConflictUnsolvable", reference.ConflictVictorName, fusionName));
                     }
                     break;
                 // Can happen if one of the references has a dependency with the same simplename, and version but no publickeytoken and the other does.

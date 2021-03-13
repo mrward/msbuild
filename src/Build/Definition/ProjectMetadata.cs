@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Build.Construction;
-using Microsoft.Build.Execution;
 using Microsoft.Build.Collections;
 using Microsoft.Build.ObjectModelRemoting;
 using Microsoft.Build.Shared;
@@ -19,7 +18,7 @@ namespace Microsoft.Build.Evaluation
     /// Never used to represent built-in metadata, like %(Filename). There is always a backing XML object.
     /// </remarks>
     [DebuggerDisplay("{Name}={EvaluatedValue} [{_xml.Value}]")]
-    public class ProjectMetadata : IKeyed, IValued, IEquatable<ProjectMetadata>, IMetadatum
+    public class ProjectMetadata : IEquatable<ProjectMetadata>, IMetadatum
     {
         /// <summary>
         /// Parent item or item definition that this metadatum lives in.

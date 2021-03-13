@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.Build.Shared.FileSystem;
 
 namespace Microsoft.Build.Shared
@@ -439,6 +438,14 @@ namespace Microsoft.Build.Shared
             s_runningTests = runningTests ?? CheckIfRunningTests;
 
             BuildEnvironmentHelperSingleton.s_instance = Initialize();
+        }
+
+        /// <summary>
+        /// Resets the current singleton instance (for testing).
+        /// </summary>
+        internal static void ResetInstance_ForUnitTestsOnly(BuildEnvironment buildEnvironment)
+        {
+            BuildEnvironmentHelperSingleton.s_instance = buildEnvironment;
         }
 
         private static Func<string> s_getProcessFromRunningProcess = GetProcessFromRunningProcess;

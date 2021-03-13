@@ -6,8 +6,6 @@ using System.Diagnostics;
 using Microsoft.Build.Collections;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Evaluation;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Construction;
 using Microsoft.Build.BackEnd;
 
 namespace Microsoft.Build.Execution
@@ -18,7 +16,7 @@ namespace Microsoft.Build.Execution
     /// IMMUTABLE OBJECT.
     /// </summary>
     [DebuggerDisplay("{_name}={EvaluatedValue}")]
-    public class ProjectMetadataInstance : IKeyed, IValued, IEquatable<ProjectMetadataInstance>, ITranslatable, IMetadatum, IDeepCloneable<ProjectMetadataInstance>, IImmutable
+    public class ProjectMetadataInstance : IEquatable<ProjectMetadataInstance>, ITranslatable, IMetadatum, IDeepCloneable<ProjectMetadataInstance>, IImmutable
     {
         /// <summary>
         /// Name of the metadatum

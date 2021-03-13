@@ -2,16 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.IO;
 using System.Reflection;
-using System.Collections;
-using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks;
 using Microsoft.Build.Utilities;
 using Microsoft.Build.Shared;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using System.Text;
 using Xunit;
 
 namespace Microsoft.Build.UnitTests
@@ -44,7 +38,7 @@ namespace Microsoft.Build.UnitTests
         private static string[] Parse(string cl)
         {
             int emptySplits;
-            string[] pieces = (string[])QuotingUtilities.SplitUnquoted(cl, int.MaxValue, false, true, out emptySplits, ' ', '\n').ToArray(typeof(string));
+            string[] pieces = QuotingUtilities.SplitUnquoted(cl, int.MaxValue, false, true, out emptySplits, ' ', '\n').ToArray();
             return pieces;
         }
 

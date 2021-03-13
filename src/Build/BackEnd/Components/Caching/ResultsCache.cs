@@ -5,8 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.IO;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Shared;
 
@@ -242,7 +240,7 @@ namespace Microsoft.Build.BackEnd
                 ref localReference,
                 (ITranslator aTranslator, ref int i) => aTranslator.Translate(ref i),
                 (ITranslator aTranslator, ref BuildResult result) => aTranslator.Translate(ref result),
-                capacity => new ConcurrentDictionary<int, BuildResult>(Environment.ProcessorCount, capacity));
+                capacity => new ConcurrentDictionary<int, BuildResult>(NativeMethodsShared.GetLogicalCoreCount(), capacity));
 
             if (translator.Mode == TranslationDirection.ReadFromStream)
             {
