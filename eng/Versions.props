@@ -10,7 +10,7 @@
     <SemanticVersioningV1>true</SemanticVersioningV1>
     <MicroBuildPluginsSwixBuildVersion>1.0.672</MicroBuildPluginsSwixBuildVersion>
     <MonoBuild Condition="'$(Configuration)' == 'Debug-MONO' or '$(Configuration)' == 'Release-MONO'">true</MonoBuild>
-    <MicrosoftNetCompilersVersion>3.7.0-5.20367.1</MicrosoftNetCompilersVersion>
+    <MicrosoftNetCompilersVersion>3.9.0-5.21112.8</MicrosoftNetCompilersVersion>
   </PropertyGroup>
   <!-- Repo Toolset Features -->
   <PropertyGroup Condition="'$(MonoBuild)' != 'true'">
@@ -32,7 +32,7 @@
     <MicrosoftDotNetCliRuntimeVersion>3.1.400-preview.20365.4</MicrosoftDotNetCliRuntimeVersion>
     <DotNetCliVersion>3.1.100</DotNetCliVersion>
     <MicrosoftNetCompilersToolsetVersion>3.3.1-beta3-final</MicrosoftNetCompilersToolsetVersion>
-    <NuGetBuildTasksVersion>5.9.0-preview.3.7016</NuGetBuildTasksVersion>
+    <NuGetBuildTasksVersion>5.9.0-rc.7122</NuGetBuildTasksVersion>
   </PropertyGroup>
   <Target Name="OverrideArcadeFileVersion" AfterTargets="_InitializeAssemblyVersion">
     <!-- See https://github.com/dotnet/arcade/issues/3386
