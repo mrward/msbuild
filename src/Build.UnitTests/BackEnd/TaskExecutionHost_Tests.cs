@@ -20,6 +20,7 @@ using Microsoft.Build.Shared;
 using InvalidProjectFileException = Microsoft.Build.Exceptions.InvalidProjectFileException;
 using TaskItem = Microsoft.Build.Execution.ProjectItemInstance.TaskItem;
 using Xunit;
+using Microsoft.Build.Engine.UnitTests.TestComparers;
 
 namespace Microsoft.Build.UnitTests.BackEnd
 {
@@ -1132,12 +1133,12 @@ namespace Microsoft.Build.UnitTests.BackEnd
         /// </summary>
         private static bool IsTaskFactoryClass(Type type, object unused)
         {
-            return (type.GetTypeInfo().IsClass &&
+            return type.GetTypeInfo().IsClass &&
                 !type.GetTypeInfo().IsAbstract &&
 #if FEATURE_TYPE_GETINTERFACE
-                (type.GetInterface("Microsoft.Build.Framework.ITaskFactory") != null));
+                (type.GetInterface("Microsoft.Build.Framework.ITaskFactory") != null);
 #else
-                type.GetInterfaces().Any(interfaceType => interfaceType.FullName == "Microsoft.Build.Framework.ITaskFactory"));
+                type.GetInterfaces().Any(interfaceType => interfaceType.FullName == "Microsoft.Build.Framework.ITaskFactory");
 #endif
         }
 

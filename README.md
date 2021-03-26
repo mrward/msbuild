@@ -6,11 +6,15 @@ For more information on MSBuild, see the [MSBuild documentation](https://docs.mi
 
 ### Build Status
 
-The current development branch is `master`. Changes in `master` will go into a future update of MSBuild, which will release with Visual Studio 16.8 and a corresponding version of the .NET Core SDK.
+The current development branch is `master`. Changes in `master` will go into a future update of MSBuild, which will release with Visual Studio 16.9 and a corresponding version of the .NET Core SDK.
 
 [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/Microsoft/msbuild/msbuild-pr?branchName=master)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=86&branchName=master)
 
-We have forked for MSBuild 16.7 in the branch [`vs16.7`](https://github.com/Microsoft/msbuild/tree/vs16.7). Changes to that branch need special approval.
+We have forked for MSBuild 16.8 in the branch [`vs16.8`](https://github.com/Microsoft/msbuild/tree/vs16.8). Changes to that branch need special approval.
+
+[![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/Microsoft/msbuild/msbuild-pr?branchName=vs16.8)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=86&branchName=vs16.8)
+
+MSBuild 16.7 builds from the branch [`vs16.7`](https://github.com/Microsoft/msbuild/tree/vs16.7). Only high-priority bugfixes will be considered for servicing 16.7.
 
 [![Build Status](https://dev.azure.com/dnceng/public/_apis/build/status/Microsoft/msbuild/msbuild-pr?branchName=vs16.7)](https://dev.azure.com/dnceng/public/_build/latest?definitionId=86&branchName=vs16.7)
 
@@ -39,7 +43,7 @@ To get started on **Visual Studio 2019**:
 3. Clone the source code: `git clone https://github.com/Microsoft/msbuild.git`
   - You may have to [download Git](https://git-scm.com/downloads) first.
 4. Run `.\build.cmd` from the root of the repo to build the code. This also restores packages needed to open the projects in Visual Studio.
-5. Open `MSBuild.sln` or `MSBuild.Dev.sln` in Visual Studio 2019.
+5. Open `MSBuild.sln` or `MSBuild.Dev.slnf` in Visual Studio 2019.
 
 Note: To create a usable MSBuild with your changes, run `.\build.cmd /p:CreateBootstrap=true`.
 
@@ -52,10 +56,6 @@ MSBuild can be run on Unix systems that support .NET Core. Set-up instructions c
 ## Localization
 
 You can turn on localized builds via the `/p:LocalizedBuild=true` command line argument. For more information on localized builds and how to make contributions to MSBuild's translations, see our [localization documentation](documentation/wiki/Localization.md)
-
-## How to Engage, Contribute and Provide Feedback
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 #### Getting Started
 

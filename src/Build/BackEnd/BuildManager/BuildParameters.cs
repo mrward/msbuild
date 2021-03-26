@@ -5,18 +5,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Threading;
 using System.Globalization;
 using Microsoft.Build.BackEnd;
 using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Experimental.ProjectCache;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Graph;
 using Microsoft.Build.Internal;
 using Microsoft.Build.Shared;
 using Microsoft.Build.Shared.FileSystem;
 using ForwardingLoggerRecord = Microsoft.Build.Logging.ForwardingLoggerRecord;
-using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Execution
 {
@@ -298,6 +298,7 @@ namespace Microsoft.Build.Execution
             _outputResultsCacheFile = other._outputResultsCacheFile;
             DiscardBuildResults = other.DiscardBuildResults;
             LowPriority = other.LowPriority;
+            ProjectCacheDescriptor = other.ProjectCacheDescriptor;
         }
 
 #if FEATURE_THREAD_PRIORITY
@@ -322,7 +323,7 @@ namespace Microsoft.Build.Execution
         /// <summary>
         /// Indicates whether to emit a default error if a task returns false without logging an error.
         /// </summary>
-        public bool AllowFailureWithoutError { get; set; } = true;
+        public bool AllowFailureWithoutError { get; set; } = false;
 
         /// <summary>
         /// Gets the environment variables which were set when this build was created.
@@ -395,7 +396,7 @@ namespace Microsoft.Build.Execution
         public bool EnableNodeReuse
         {
             get => _enableNodeReuse;
-            set => _enableNodeReuse = Traits.Instance.DisableNodeReuse ? false : value;
+            set => _enableNodeReuse = Environment.GetEnvironmentVariable("MSBUILDDISABLENODEREUSE") == "1" ? false : value;
         }
 
         /// <summary>
@@ -557,7 +558,7 @@ namespace Microsoft.Build.Execution
         /// <comments>
         /// toolsetProvider.Toolsets is already a readonly collection.
         /// </comments>
-        public ICollection<Toolset> Toolsets => _toolsetProvider.Toolsets;
+        public ICollection<Toolset> Toolsets => ToolsetProvider.Toolsets;
 
         /// <summary>
         /// The name of the UI culture to use during the build.
@@ -783,6 +784,14 @@ namespace Microsoft.Build.Execution
         public bool LowPriority { get; set; }
 
         /// <summary>
+        /// If set, the BuildManager will query all
+        /// incoming <see cref="BuildSubmission"/> requests against the specified project cache.
+        /// Any <see cref="GraphBuildSubmission"/> requests will also use this project cache instead of
+        /// the potential project caches described in graph node's evaluations.
+        /// </summary>
+        public ProjectCacheDescriptor ProjectCacheDescriptor { get; set; }
+
+        /// <summary>
         /// Retrieves a toolset.
         /// </summary>
         public Toolset GetToolset(string toolsVersion)
@@ -906,7 +915,7 @@ namespace Microsoft.Build.Execution
             ResetCaches = true;
             _toolsetProvider = toolsetProvider;
 
-            if (Traits.Instance.DisableNodeReuse) // For example to disable node reuse within Visual Studio
+            if (Environment.GetEnvironmentVariable("MSBUILDDISABLENODEREUSE") == "1") // For example to disable node reuse within Visual Studio
             {
                 _enableNodeReuse = false;
             }
