@@ -334,7 +334,7 @@ namespace Microsoft.Build.Execution
         {
             get
             {
-                if (null != _requestException || _circularDependency || !_baseOverallResult)
+                if (_requestException != null || _circularDependency || !_baseOverallResult)
                 {
                     return BuildResultCode.Failure;
                 }
@@ -464,6 +464,12 @@ namespace Microsoft.Build.Execution
         {
             ErrorUtilities.VerifyThrowArgumentNull(target, nameof(target));
             ErrorUtilities.VerifyThrowArgumentNull(result, nameof(result));
+
+            lock (this)
+            {
+                _resultsByTarget ??= CreateTargetResultDictionary(1);
+            }
+
             if (_resultsByTarget.ContainsKey(target))
             {
                 ErrorUtilities.VerifyThrow(_resultsByTarget[target].ResultCode == TargetResultCode.Skipped, "Items already exist for target {0}.", target);
@@ -502,7 +508,7 @@ namespace Microsoft.Build.Execution
             }
 
             // If there is an exception and we did not previously have one, add it in.
-            _requestException = _requestException ?? results.Exception;
+            _requestException ??= results.Exception;
         }
 
         /// <summary>

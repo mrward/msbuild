@@ -72,6 +72,8 @@
 
       <!-- Note: we are not copying *everything* under msbuild-bin -->
       <MonoBinDirOverlayFiles Include="$(RepoRoot)\mono\layout\msbuild-bin\*" Condition="'$(MonoBuild)' == 'true'" />
+      <MonoBinDirOverlayFiles Include="$(RepoRoot)\mono\dotnet-overlay\msbuild-bin\Microsoft.NETCoreSdk.BundledVersions.props" Condition="'$(MonoBuild)' == 'true'" />
+      <MonoBinDirOverlayFiles Include="$(RepoRoot)\mono\dotnet-overlay\msbuild-bin\RuntimeIdentifierGraph.json" Condition="'$(MonoBuild)' == 'true'" />
 
       <InstalledStaticAnalysisTools Include="$(VsInstallRoot)\Team Tools\Static Analysis Tools\**\*.*" />
 
@@ -169,6 +171,9 @@
           DestinationFiles="@(FreshlyBuiltRootProjects -> '$(BootstrapDestination)$(TargetMSBuildToolsVersion)\%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(FreshlyBuiltProjects)"
           DestinationFiles="@(FreshlyBuiltProjects -> '$(BootstrapDestination)$(TargetMSBuildToolsVersion)\Bin\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(FreshlyBuiltProjects)"
+          DestinationFiles="@(FreshlyBuiltProjects -> '$(BootstrapDestination)$(TargetMSBuildToolsVersion)\Bin\amd64\%(RecursiveDir)%(Filename)%(Extension)')" />
+
   </Target>
 
   <Target Name="BootstrapNetCore" DependsOnTargets="CleanBootstrapFolder">

@@ -291,7 +291,7 @@ namespace Microsoft.Build.Graph
                 {
                     newEntryPoints.Add(
                         new ProjectGraphEntryPoint(
-                            FileUtilities.NormalizePath(project.AbsolutePath),
+                            project.AbsolutePath,
                             solutionGlobalProperties
                                 .SetItem("Configuration", projectConfiguration.ConfigurationName)
                                 .SetItem("Platform", projectConfiguration.PlatformName)
@@ -344,10 +344,9 @@ namespace Microsoft.Build.Graph
 
                 foreach (var projectWithDependencies in solutionFile.ProjectsInOrder.Where(p => p.Dependencies.Count != 0))
                 {
-                    solutionDependencies[FileUtilities.NormalizePath(projectWithDependencies.AbsolutePath)] = projectWithDependencies.Dependencies.Select(
+                    solutionDependencies[projectWithDependencies.AbsolutePath] = projectWithDependencies.Dependencies.Select(
                         dependencyGuid =>
                         {
-
                             // code snippet cloned from SolutionProjectGenerator.AddPropertyGroupForSolutionConfiguration
 
                             if (!solutionFile.ProjectsByGuid.TryGetValue(dependencyGuid, out var dependencyProject))
@@ -366,7 +365,7 @@ namespace Microsoft.Build.Graph
                             // (If a project is not selected for build in the solution configuration, it won't build even if it's depended on by something that IS selected for build)
                             // .. and only if it's known to be MSBuild format, as projects can't use the information otherwise 
                             return dependencyProject?.ProjectType == SolutionProjectType.KnownToBeMSBuildFormat
-                                ? FileUtilities.NormalizePath(dependencyProject.AbsolutePath)
+                                ? dependencyProject.AbsolutePath
                                 : null;
                         })
                         .Where(p => p != null)
@@ -576,8 +575,7 @@ namespace Microsoft.Build.Graph
                 if (i != 0)
                 {
                     errorMessage.Append(projectsInCycle[i])
-                        .Append(" ->")
-                        .AppendLine();
+                        .AppendLine(" ->");
                 }
                 else
                 {
