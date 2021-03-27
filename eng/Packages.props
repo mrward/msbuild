@@ -30,7 +30,9 @@
     <PackageReference Update="System.Linq.Parallel" Version="4.0.1" />
     <PackageReference Update="System.Memory" Version="4.5.4" />
     <PackageReference Update="System.Net.Http" Version="4.3.4" />
-    <PackageReference Update="System.Reflection.Metadata" Version="1.6.0" />
+    <!-- Make sure we're using a consistent version of SRM between MSBuild and Roslyn, keep this consistent with app.config and app.amd64.config -->
+    <!-- <PackageReference Update="System.Reflection.Metadata" Version="1.6.0" /> -->
+    <PackageReference Update="System.Reflection.Metadata" Version="5.0.0" />
     <PackageReference Update="System.Reflection.TypeExtensions" Version="4.1.0" />
     <PackageReference Update="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Update="System.Resources.Writer" Version="4.0.0" />
