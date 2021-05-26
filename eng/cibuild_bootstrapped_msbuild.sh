@@ -77,7 +77,7 @@ Stage1Dir="$RepoRoot/stage1"
 PerfLogDir="$ArtifactsDir/log/$configuration/PerformanceLogs"
 
 mono_msbuild_dir="$artifacts_dir/mono-msbuild"
-msbuild_download_url="https://github.com/mrward/msbuild/releases/download/v16.9.0/mono_msbuild_6.12.0.137.zip"
+msbuild_download_url="https://github.com/mono/msbuild/releases/download/v16.9.0/mono_msbuild_6.12.0.137.zip"
 msbuild_zip="$artifacts_dir/msbuild.zip"
 roslyn_version_to_use=`grep -i MicrosoftNetCompilersVersion $ScriptRoot/Versions.props  | sed -e 's,^.*>\([^<]*\)<.*$,\1,'`
 nuget_version_to_use=`grep -i NuGetBuildTasksVersion $ScriptRoot/Versions.props  | sed -e 's,^.*>\([^<]*\)<.*$,\1,'`
