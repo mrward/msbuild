@@ -29,7 +29,7 @@
     <MicrosoftNETSdkWebVersion>3.1.300-servicing.20216.7</MicrosoftNETSdkWebVersion>
     <ILLinkTasksVersion>0.1.6-prerelease.20175.2</ILLinkTasksVersion>
     <MicrosoftNETCoreAppVersion>3.1.6-servicing.20316.4</MicrosoftNETCoreAppVersion>
-    <MicrosoftDotNetCliRuntimeVersion>3.1.400-preview.20365.4</MicrosoftDotNetCliRuntimeVersion>
+    <MicrosoftDotNetCliRuntimeVersion>5.0.300-servicing.21267.11</MicrosoftDotNetCliRuntimeVersion>
     <DotNetCliVersion>3.1.100</DotNetCliVersion>
     <MicrosoftNetCompilersToolsetVersion>3.9.0-2.20574.26</MicrosoftNetCompilersToolsetVersion>
     <NuGetBuildTasksVersion>5.9.1-rc.8</NuGetBuildTasksVersion>
